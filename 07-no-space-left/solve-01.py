@@ -50,13 +50,9 @@ with open(in_file_name) as device_file:
             line_parts = line.split()
             current_directory_structure[line_parts[1]] = int(line_parts[0])
 
-print(f"{device_structure}")
+# print(f"{device_structure}")
 
 directory_sizes = {}
-backtracking_keys = []
-spent_keys = []
-dfs_keys = list(device_structure) # Get top level dict keys first
-current_directory_structure = device_structure
 
 # This function will return the size of the directory described by `struct` and named `struct_name`
 def rec_find_directory_sizes(struct, struct_name):
