@@ -7,8 +7,8 @@ signals = []
 
 def check_and_sample_signal(cycle, register):
     if (cycle + 20) % 40 == 0:
-        print(f"Sampling at cycle {cycle}")
-        print(f"Register is {register}")
+        # print(f"Sampling at cycle {cycle}")
+        # print(f"Register is {register}")
         signals.append(cycle * register)
 
 
@@ -30,6 +30,6 @@ with open(in_file_name) as cpu_instructions:
             register_x += v_value
 
 
-
+print(f"The last cycle # is {cycle_counter}")
 print(f"The total signals samples is {signals}")
 print(f"The sum of signals is {sum(signals)}")
