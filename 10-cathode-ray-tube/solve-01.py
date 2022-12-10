@@ -20,8 +20,8 @@ with open(in_file_name) as cpu_instructions:
         cycle_counter += 1
         check_and_sample_signal(cycle_counter, register_x)
         cmd_parts = command.split()
-        if cycle_counter > 215:
-            print("checking now")
+        # if cycle_counter > 215:
+        #     print("checking now")
 
         if len(cmd_parts) > 1:
             v_value = int(cmd_parts[1])
