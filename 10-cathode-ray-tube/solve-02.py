@@ -1,16 +1,7 @@
 #!/usr/bin/env python3.8
 
 in_file_name = "test-input.txt"
-# in_file_name = "puzzle-input.txt"
-
-# signals = []
-#
-#
-# def check_and_sample_signal(cycle, register):
-#     if (cycle + 20) % 40 == 0:
-#         print(f"Sampling at cycle {cycle}")
-#         print(f"Register is {register}")
-#         signals.append(cycle * register)
+in_file_name = "puzzle-input.txt"
 
 """
 NOTES:
@@ -31,12 +22,35 @@ CRT_LIT_PIXELS_POS = []
 
 def draw_pixel_and_update(cycle, x):
     crt_index = cycle - 1
-    horizontal_loc = cycle % CRT_WIDTH
+    horizontal_loc = crt_index % CRT_WIDTH
 
     if horizontal_loc in [x - 1, x, x + 1]:
         CRT_LIT_PIXELS_POS.append(crt_index)
 
+    print_crt(lit_pixels=CRT_LIT_PIXELS_POS, cycle=cycle)
+
     return cycle + 1
+
+
+def print_sprite(x):
+    blank_screen = "." * CRT_WIDTH
+    sprite_str = blank_screen[:x-1] + "###" + blank_screen[x+2:]
+    print(f"Sprite pos: {sprite_str}")
+    # print(f"Sprite pos: {blank_screen[:x-1]}###{blank_screen[x+1:]}")
+
+
+def print_crt(lit_pixels, cycle=240):
+    crt_slice = CRT_PIXELS[:cycle]
+
+    for pixel in lit_pixels:
+        if pixel < cycle:
+            crt_slice = crt_slice[:pixel] + CRT_LIT_PIXEL_ENUM + crt_slice[pixel + 1:]
+
+    if cycle > CRT_WIDTH:
+        for crt_row in range(cycle // 40):
+            print(f"{crt_slice[crt_row * CRT_WIDTH:(crt_row + 1) * CRT_WIDTH]}")
+    else:
+        print(f"{crt_slice}")
 
 
 with open(in_file_name) as cpu_instructions:
@@ -46,18 +60,21 @@ with open(in_file_name) as cpu_instructions:
     for command in cpu_instructions:
         cmd_parts = command.split()
 
-        if len(cmd_parts) > 1:
-            v_value = int(cmd_parts[1])
-            cycle_counter = draw_pixel_and_update(cycle_counter, register_x)
-            register_x += v_value
+        print(f"Start of cycle {cycle_counter}, executing {command.rstrip()}")
 
+        print(f"During cycle {cycle_counter}, drawing pixel {cycle_counter - 1}")
         cycle_counter = draw_pixel_and_update(cycle_counter, register_x)
 
+        if len(cmd_parts) == 1:
+            print(f"End of cycle {cycle_counter - 1}, finished with noop")
+            continue
 
-for lit_pixel_pos in CRT_LIT_PIXELS_POS:
-    CRT_PIXELS = CRT_PIXELS[:lit_pixel_pos] + CRT_LIT_PIXEL_ENUM + CRT_PIXELS[lit_pixel_pos + 1:]
+        print(f"During cycle {cycle_counter}, drawing pixel {cycle_counter - 1}")
+        cycle_counter = draw_pixel_and_update(cycle_counter, register_x)
 
-print(f"Finished with {cycle_counter} cycles completed")
-# print(f"{CRT_PIXELS}")
-for r in range(6):
-    print(f"{CRT_PIXELS[r * CRT_WIDTH:(r + 1) * CRT_WIDTH]}")
+        v_value = int(cmd_parts[1])
+        register_x += v_value
+        print(f"End of cycle {cycle_counter - 1}, finished with add {v_value}, register is now {register_x}")
+        print_sprite(register_x)
+
+print_crt(lit_pixels=CRT_LIT_PIXELS_POS)
